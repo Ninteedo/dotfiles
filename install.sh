@@ -18,6 +18,9 @@ if has_sudo; then
     echo "Sudo privileges detected, installing packages..."
     sudo apt update
     sudo apt install -y zsh git curl
+
+    # More programs
+    sudo apt install -y neovim ranger tmux duf procs sd
 else
     echo "No sudo pivileges, skipping package installation."
 fi
@@ -39,13 +42,23 @@ fi
 
 # Install Oh My Zsh if not present
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
-    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    RUNZSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 else
     echo "Oh My Zsh already installed, skipping."
 fi
 
 echo "Linking configuration files"
-ln -sf ~/.config/zsh/.zshrc ~/.zshrc
+
+if [ ! -f ~/.zshrc ]; then
+    echo "Creating a minimal ~/.zshrc to source custom configuration"
+    echo "source ~/.config/zsh/.zshrc" > ~/.zshrc
+elif ! grep -q "source ~/.config/zsh/.zshrc" ~/.zshrc; then
+    echo "Adding source command to ~/.zshrc"
+    echo "source ~/.config/zsh/.zshrc" >> ~/.zshrc
+else
+    echo "~/.zshrc already correctly configured."
+fi
+
 ln -sf ~/.config/zsh/.p10k.zsh ~/.p10k.zsh
 
 mkdir -p ~/.oh-my-zsh/custom/themes
@@ -60,13 +73,6 @@ done
 for plugin in ~/.config/zsh/custom/plugins/*; do
     ln -sf "$plugin" ~/.oh-my-zsh/custom/plugins/
 done
-
-# Check if the .zshrc has been sourced correctly
-if grep -q "source ~/.zshrc" ~/.zshrc; then
-    echo ".zshrc already sourced."
-else
-    echo "source ~/.zshrc" >> ~/.zshrc
-fi
 
 # Test if Zsh is configured properly
 if zsh -c "echo Zsh is working!" &> /dev/null; then
