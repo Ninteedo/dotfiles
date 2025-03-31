@@ -27,18 +27,6 @@ if ! command -v zsh &> /dev/null; then
     exit 1
 fi
 
-# Set Zsh as default shell (check if it's already set)
-if [ "$SHELL" != "$(which zsh)" ]; then
-    if has_sudo; then
-        echo "Setting Zsh as default shell for $USER..."
-        sudo chsh -s "$(which zsh)" "$USER"
-    else
-        echo "Cannot change default shell without sudo privileges."
-    fi
-else
-    echo "Zsh is already the default shell."
-fi
-
 # Clone the config repo if it doesn't already exist
 if [ ! -d "$HOME/.config/zsh" ]; then
     git clone --recurse-submodules --shallow-submodules https://github.com/Ninteedo/dotfiles.git "$HOME/.config/zsh"
@@ -47,7 +35,7 @@ else
 fi
 
 # Set Zsh as default shell
-chsh -s $(which zsh)
+# chsh -s $(which zsh)
 
 # Install Oh My Zsh if not present
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
