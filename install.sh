@@ -1,8 +1,11 @@
 #!/bin/bash
 
 has_sudo() {
-    sudo -n true 2>/dev/null
-    return $?
+    if sudo -l &>/dev/null; then
+        return 0
+    else
+        return 1
+    fi
 }
 
 if [ "$(id -u)" = "0" ]; then
