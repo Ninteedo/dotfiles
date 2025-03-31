@@ -1,0 +1,9 @@
+[submodule "custom/powerlevel10k"]
+	path = custom/powerlevel10k
+	url = https://github.com/romkatv/powerlevel10k.git
+[submodule "custom/zsh-syntax-highlighting"]
+	path = custom/zsh-syntax-highlighting
+	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
+[submodule "custom/zsh-autosuggestions"]
+	path = custom/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions.git
