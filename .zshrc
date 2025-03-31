@@ -110,5 +110,13 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+# Fix Home and End keys in MobaXterm
+bindkey '\e[1~' beginning-of-line  # Home key
+bindkey '\e[4~' end-of-line        # End key
+bindkey '\eOH' beginning-of-line   # Home key
+bindkey '\eOF' end-of-line         # End key
+bindkey '^[[H' beginning-of-line   # Home key
+bindkey '^[[F' end-of-line         # End key
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
