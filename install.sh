@@ -5,6 +5,11 @@ has_sudo() {
     return $?
 }
 
+if [ "$(id -u)" = "0" ]; then
+    echo "Error: Do not run this script as root."
+    exit 1
+fi
+
 # Install Zsh and Git if not installed
 if has_sudo; then
     echo "Sudo privileges detected, installing packages..."
@@ -14,8 +19,29 @@ else
     echo "No sudo pivileges, skipping package installation."
 fi
 
-# Clone the config repo
-git clone --recurse-submodules --shallow-submodules https://github.com/Ninteedo/dotfiles.git ~/.config/zsh
+if ! command -v zsh &> /dev/null; then
+    echo "Error: Zsh is not installed. Please install it first."
+    exit 1
+fi
+
+# Set Zsh as default shell (check if it's already set)
+if [ "$SHELL" != "$(which zsh)" ]; then
+    if has_sudo; then
+        echo "Setting Zsh as default shell for $USER..."
+        sudo chsh -s "$(which zsh)" "$USER"
+    else
+        echo "Cannot change default shell without sudo privileges."
+    fi
+else
+    echo "Zsh is already the default shell."
+fi
+
+# Clone the config repo if it doesn't already exist
+if [ ! -d "$HOME/.config/zsh" ]; then
+    git clone --recurse-submodules --shallow-submodules https://github.com/Ninteedo/dotfiles.git "$HOME/.config/zsh"
+else
+    echo "Configuration repository already exists. Skipping clone."
+fi
 
 # Set Zsh as default shell
 chsh -s $(which zsh)
@@ -44,8 +70,18 @@ for plugin in ~/.config/zsh/custom/plugins/*; do
     ln -sf "$plugin" ~/.oh-my-zsh/custom/plugins/
 done
 
+# Check if the .zshrc has been sourced correctly
+if grep -q "source ~/.zshrc" ~/.zshrc; then
+    echo ".zshrc already sourced."
+else
+    echo "source ~/.zshrc" >> ~/.zshrc
+fi
 
-# Source the new configuration
-source ~/.zshrc
+# Test if Zsh is configured properly
+if zsh -c "echo Zsh is working!" &> /dev/null; then
+    echo "Zsh environment setup complete!"
+else
+    echo "Error: Zsh configuration failed. Please check your .zshrc."
+fi
 
-echo "Zsh environment setup complete!"
+echo "Setup complete! Run 'zsh' to start using your new shell."
