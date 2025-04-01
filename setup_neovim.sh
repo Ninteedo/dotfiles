@@ -11,6 +11,7 @@ fi
 INIT_VIM_PATH=$(realpath "$1")
 
 # Link config
+mkdir -p ~/.config/nvim
 ln -sf "$INIT_VIM_PATH" ~/.config/nvim/init.vim
 sudo apt remove -y neovim
 
