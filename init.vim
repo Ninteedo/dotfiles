@@ -22,15 +22,29 @@ set ttyfast                 " Speed up scrolling in Vim
 " set spell                 " enable spell check (may need to download language package)
 " set noswapfile            " disable creating swap file
 " set backupdir=~/.cache/vim " Directory to store backup files.
+set smartcase
+set undofile
+set undodir=~/.vim/undodir
+
 
 call plug#begin()
  " Plugin Section
  Plug 'dracula/vim'
  Plug 'ryanoasis/vim-devicons'
- Plug 'SirVer/ultisnips'
+ " Plug 'SirVer/ultisnips'
  Plug 'honza/vim-snippets'
  Plug 'scrooloose/nerdtree'
  Plug 'preservim/nerdcommenter'
  Plug 'mhinz/vim-startify'
  Plug 'neoclide/coc.nvim', {'branch': 'release'}
+ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+ Plug 'vim-airline/vim-airline'
+ Plug 'vim-airline/vim-airline-themes'
+ Plug 'tpope/vim-fugitive'
+ Plug 'airblade/vim-gitgutter'
+ Plug 'ntpeters/vim-better-whitespace'
 call plug#end()
+
+let g:airline_theme='dracula'
+let g:python3_host_prog = '/usr/bin/python3'
+

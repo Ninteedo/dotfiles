@@ -19,7 +19,7 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 if has_sudo; then
     echo "Sudo privileges detected, installing packages..."
     sudo apt update
-    sudo apt install -y zsh git curl
+    sudo apt install -y zsh git
 
     # More programs
     sudo apt install -y neovim ranger tmux duf procs sd
@@ -44,7 +44,7 @@ fi
 
 # Install Oh My Zsh if not present
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
-    RUNZSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    RUNZSH=no KEEP_ZSHRC=yes sh -c "$(wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 else
     echo "Oh My Zsh already installed, skipping."
 fi
