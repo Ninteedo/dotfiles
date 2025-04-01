@@ -13,6 +13,8 @@ if [ "$(id -u)" = "0" ]; then
     exit 1
 fi
 
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+
 # Install Zsh and Git if not installed
 if has_sudo; then
     echo "Sudo privileges detected, installing packages..."
@@ -81,4 +83,7 @@ else
     echo "Error: Zsh configuration failed. Please check your .zshrc."
 fi
 
-echo "Setup complete! Run 'zsh' to start using your new shell."
+echo "Zsh setup complete! Installing neovim."
+
+"$SCRIPT_DIR/setup_neovim.sh" "$SCRIPT_DIR/init.vim"
+
