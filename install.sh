@@ -87,3 +87,15 @@ echo "Zsh setup complete! Installing neovim."
 
 "$SCRIPT_DIR/setup_neovim.sh" "$SCRIPT_DIR/init.vim"
 
+if has_sudo; then
+    echo "Enabling en_GB.UTF-8 locale."
+    sudo sed -i 's/# en_GB.UTF-8 UTF-8/en_GB.UTF-8 UTF-8/g' /etc/locale.gen
+    sudo locale-gen
+    sudo update-locale LANG=en_GB.UTF-8
+
+    export LANG=en_GB.UTF-8
+    export LC_ALL=en_GB.UTF-8
+
+    sudo apt install -y btop
+fi
+

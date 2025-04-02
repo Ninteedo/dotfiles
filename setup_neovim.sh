@@ -13,7 +13,6 @@ INIT_VIM_PATH=$(realpath "$1")
 # Link config
 mkdir -p ~/.config/nvim
 ln -sf "$INIT_VIM_PATH" ~/.config/nvim/init.vim
-sudo apt remove -y neovim
 
 # Create a temporary directory for the build
 BUILD_DIR=$(mktemp -d)
@@ -26,23 +25,38 @@ wget https://github.com/neovim/neovim/releases/download/v0.11.0/nvim-linux-x86_6
 # Extract and move to the appropriate location
 tar -xzf nvim-linux-x86_64.tar.gz
 
-# Move the entire Neovim directory to /usr/local
-sudo rm -rf /usr/local/nvim
-sudo mv nvim-linux-x86_64 /usr/local/nvim
+# Move the entire Neovim directory to a local bin folder
+mkdir -p ~/.local/neovim
+rm -rf ~/.local/neovim/nvim-linux-x86_64
+mv nvim-linux-x86_64 ~/.local/neovim
 
-# Create a symlinks for commands
-sudo ln -sf /usr/local/nvim/bin/nvim /usr/local/bin/nvim
-sudo update-alternatives --install /usr/bin/vim vim /usr/local/bin/nvim 100
-sudo update-alternatives --set vim /usr/local/bin/nvim
+mkdir -p "$HOME/.local/neovim/bin"
+ln -sf "$HOME/.local/neovim/nvim-linux-x86_64/bin/nvim" "$HOME/.local/neovim/bin/nvim"
+ln -sf "$HOME/.local/neovim/nvim-linux-x86_64/bin/nvim" "$HOME/.local/neovim/bin/vim"
 
-# sudo rm -f /usr/bin/vim
-# sudo ln -sf /usr/local/bin/nvim /usr/bin/vim
+# Update the user's PATH if necessary
+
+if [ -f ~/.bashrc ]; then
+    if ! grep -q 'export PATH="$HOME/.local/neovim/bin:$PATH"' ~/.bashrc; then
+        echo 'export PATH="$HOME/.local/neovim/bin:$PATH"' >> ~/.bashrc
+        echo "Updated PATH in ~/.bashrc"
+    fi
+fi
+if [ -f ~/.zshrc ]; then
+    if ! grep -q 'export PATH="$HOME/.local/neovim/bin:$PATH"' ~/.zshrc; then
+        echo 'export PATH="$HOME/.local/neovim/bin:$PATH"' >> ~/.zshrc
+        echo "Updated PATH in ~/.zshrc"
+    fi
+fi
+
+# Apply changes to PATH in the current session
+export PATH="$HOME/.local/neovim/bin:$PATH"
 
 # Clean up
 popd
 rm -rf "$BUILD_DIR"
 
-echo "Neovim installed, installing vim-plug."
+echo "Neovim installed locally, installing vim-plug."
 
 # Install vim-plug
 sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
@@ -53,5 +67,5 @@ ln -sf "$INIT_VIM_PATH" ~/.config/nvim/init.vim
 
 nvim --headless +PlugInstall +qall
 
-echo "vim-plug installion complete."
+echo "vim-plug installation complete. Please restart your terminal to use Neovim."
 
