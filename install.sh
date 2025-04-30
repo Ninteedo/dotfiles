@@ -61,6 +61,7 @@ else
     echo "~/.zshrc already correctly configured."
 fi
 
+rm ~/.p10k
 ln -sf ~/.config/zsh/.p10k.zsh ~/.p10k.zsh
 
 mkdir -p ~/.oh-my-zsh/custom/themes
