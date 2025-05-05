@@ -43,8 +43,9 @@ fi
 # chsh -s $(which zsh)
 
 # Install Oh My Zsh if not present
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
-    RUNZSH=no KEEP_ZSHRC=yes sh -c "$(wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+if [ ! -d "$HOME/.oh-my-zsh/oh-my-zsh.sh" ]; then
+    rm -rf "$HOME/.oh-my-zsh"
+    RUNZSH=no KEEP_ZSHRC=yes sh -c "$(wget -O - https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 else
     echo "Oh My Zsh already installed, skipping."
 fi
