@@ -25,6 +25,8 @@ set ttyfast                 " Speed up scrolling in Vim
 set smartcase
 set undofile
 set undodir=~/.vim/undodir
+set termguicolors
+" set guicursor=
 
 
 call plug#begin()
@@ -33,7 +35,7 @@ call plug#begin()
  Plug 'ryanoasis/vim-devicons'
  " Plug 'SirVer/ultisnips'
  Plug 'honza/vim-snippets'
- Plug 'scrooloose/nerdtree'
+ Plug 'nvim-tree/nvim-tree.lua'
  Plug 'preservim/nerdcommenter'
  Plug 'mhinz/vim-startify'
  Plug 'neoclide/coc.nvim', {'branch': 'release'}
