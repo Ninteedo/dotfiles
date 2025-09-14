@@ -101,3 +101,8 @@ if has_sudo; then
     sudo apt install -y btop
 fi
 
+if [ ! -d "$HOME/bin" ] || [ -z "$( ls -A '$HOME/bin' 2>/dev/null )" ]; then
+    echo "Linking bin folder"
+    ln -sf $HOME/.config/zsh/bin $HOME/bin
+fi
+
