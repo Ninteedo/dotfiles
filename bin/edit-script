@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ]; then
+    echo "Illegal number of parameters"
+    echo "Usage $0 script-name"
+    exit 1
+fi
+
+FILE_PATH="$HOME/bin/$1"
+vim $FILE_PATH

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ]; then
+    echo "Illegal number of parameters"
+    exit 1
+fi
+
+FILE_PATH="$HOME/bin/$1"
+
+echo "#!/bin/bash" > $FILE_PATH
+chmod +x $FILE_PATH
+vim $FILE_PATH
