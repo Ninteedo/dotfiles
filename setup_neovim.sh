@@ -34,24 +34,6 @@ mkdir -p "$HOME/.local/neovim/bin"
 ln -sf "$HOME/.local/neovim/nvim-linux-x86_64/bin/nvim" "$HOME/.local/neovim/bin/nvim"
 ln -sf "$HOME/.local/neovim/nvim-linux-x86_64/bin/nvim" "$HOME/.local/neovim/bin/vim"
 
-# Update the user's PATH if necessary
-
-if [ -f ~/.bashrc ]; then
-    if ! grep -q 'export PATH="$HOME/.local/neovim/bin:$PATH"' ~/.bashrc; then
-        echo 'export PATH="$HOME/.local/neovim/bin:$PATH"' >> ~/.bashrc
-        echo "Updated PATH in ~/.bashrc"
-    fi
-fi
-if [ -f ~/.zshrc ]; then
-    if ! grep -q 'export PATH="$HOME/.local/neovim/bin:$PATH"' ~/.zshrc; then
-        echo 'export PATH="$HOME/.local/neovim/bin:$PATH"' >> ~/.zshrc
-        echo "Updated PATH in ~/.zshrc"
-    fi
-fi
-
-# Apply changes to PATH in the current session
-export PATH="$HOME/.local/neovim/bin:$PATH"
-
 # Clean up
 popd
 rm -rf "$BUILD_DIR"
