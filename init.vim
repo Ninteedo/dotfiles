@@ -47,6 +47,7 @@ call plug#begin()
  Plug 'ntpeters/vim-better-whitespace'
 call plug#end()
 
+colorscheme dracula
 let g:airline_theme='dracula'
 let g:python3_host_prog = '/usr/bin/python3'
 
