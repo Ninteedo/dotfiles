@@ -26,7 +26,7 @@ set smartcase
 set undofile
 set undodir=~/.vim/undodir
 set termguicolors
-set shell=/bin/zsh --login
+set shell="/bin/zsh --login"
 " set guicursor=
 
 
@@ -48,9 +48,15 @@ call plug#begin()
  Plug 'ntpeters/vim-better-whitespace'
 call plug#end()
 
-colorscheme dracula
 let g:airline_theme='dracula'
 let g:python3_host_prog = '/usr/bin/python3'
 
-lua require'nvim-treesitter.configs'.setup{highlight={enable=true}}
+if empty(glob('~/.local/share/nvim/plugged/dracula'))
+  " skip setting colorscheme if not installed
+else
+  colorscheme dracula
+endif
 
+if exists(':TSInstall')
+  lua require'nvim-treesitter.configs'.setup { highlight = { enable = true } }
+endif

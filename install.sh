@@ -36,7 +36,8 @@ else
     echo "$ZSH_CONFIG already linked."
 fi
 
-ln -sf "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
+# zshrc link
+ln -sf "$ZSH_CONFIG/.zshrc" "$HOME/.zshrc"
 
 # Powerlevel10k link
 ln -sf "$DOTFILES_DIR/.p10k.zsh" "$HOME/.p10k.zsh"
