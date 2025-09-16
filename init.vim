@@ -26,6 +26,7 @@ set smartcase
 set undofile
 set undodir=~/.vim/undodir
 set termguicolors
+set shell=/bin/zsh --login
 " set guicursor=
 
 

@@ -1,11 +1,10 @@
 #!/bin/bash
 
+DOTFILES_DIR=$(dirname "$(realpath "$0")")
+ZSH_CONFIG="$HOME/.config/zsh"
+
 has_sudo() {
-    if sudo -l &>/dev/null; then
-        return 0
-    else
-        return 1
-    fi
+    sudo -l &>/dev/null
 }
 
 if [ "$(id -u)" = "0" ]; then
@@ -13,16 +12,11 @@ if [ "$(id -u)" = "0" ]; then
     exit 1
 fi
 
-SCRIPT_DIR=$(dirname "$(realpath "$0")")
-
 # Install Zsh and Git if not installed
 if has_sudo; then
     echo "Sudo privileges detected, installing packages..."
     sudo apt update
-    sudo apt install -y zsh git
-
-    # More programs
-    sudo apt install -y neovim ranger tmux duf procs sd
+    sudo apt install -y zsh git neovim ranger tmux duf procs sd
 else
     echo "No sudo pivileges, skipping package installation."
 fi
@@ -32,77 +26,66 @@ if ! command -v zsh &> /dev/null; then
     exit 1
 fi
 
-# Clone the config repo if it doesn't already exist
-if [ ! -d "$HOME/.config/zsh" ]; then
-    git clone --recurse-submodules --shallow-submodules https://github.com/Ninteedo/dotfiles.git "$HOME/.config/zsh"
+# Link Zsh config
+mkdir -p "$(dirname "$ZSH_CONFIG")"
+if [ ! -L "$ZSH_CONFIG" ]; then
+    echo "Linking $ZSH_CONFIG -> $DOTFILES_DIR/zsh"
+    rm -rf "$ZSH_CONFIG"
+    ln -s "$DOTFILES_DIR/zsh" "$ZSH_CONFIG"
 else
-    echo "Configuration repository already exists. Skipping clone."
+    echo "$ZSH_CONFIG already linked."
 fi
 
-# Set Zsh as default shell
-# chsh -s $(which zsh)
+ln -sf "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 
-# Install Oh My Zsh if not present
-if [ ! -d "$HOME/.oh-my-zsh/oh-my-zsh.sh" ]; then
+# Powerlevel10k link
+ln -sf "$DOTFILES_DIR/.p10k.zsh" "$HOME/.p10k.zsh"
+
+# Oh My Zsh
+if [ ! -f "$HOME/.oh-my-zsh/oh-my-zsh.sh" ]; then
+    echo "Installing Oh My Zsh..."
     rm -rf "$HOME/.oh-my-zsh"
-    RUNZSH=no KEEP_ZSHRC=yes sh -c "$(wget -O - https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    RUNZSH=no KEEP_ZSHRC=yes sh -c \
+      "$(wget -O - https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 else
-    echo "Oh My Zsh already installed, skipping."
+    echo "Oh My Zsh already installed."
 fi
 
-echo "Linking configuration files"
-
-if [ ! -f ~/.zshrc ]; then
-    echo "Creating a minimal ~/.zshrc to source custom configuration"
-    echo "source ~/.config/zsh/.zshrc" > ~/.zshrc
-elif ! grep -q "source ~/.config/zsh/.zshrc" ~/.zshrc; then
-    echo "Adding source command to ~/.zshrc"
-    echo "source ~/.config/zsh/.zshrc" >> ~/.zshrc
-else
-    echo "~/.zshrc already correctly configured."
-fi
-
-rm ~/.p10k
-ln -sf ~/.config/zsh/.p10k.zsh ~/.p10k.zsh
-
-mkdir -p ~/.oh-my-zsh/custom/themes
-mkdir -p ~/.oh-my-zsh/custom/plugins
-
-# Link themes and plugins, avoiding duplicates
-echo "Linking themes and plugins..."
-for theme in ~/.config/zsh/custom/themes/*; do
-    ln -sf "$theme" ~/.oh-my-zsh/custom/themes/
+# Link themes and plugins
+mkdir -p "$HOME/.oh-my-zsh/custom/themes" "$HOME/.oh-my-zsh/custom/plugins"
+for theme in "$ZSH_CONFIG/custom/themes/"*; do
+    [ -e "$theme" ] && ln -sf "$theme" "$HOME/.oh-my-zsh/custom/themes/"
+done
+for plugin in "$ZSH_CONFIG/custom/plugins/"*; do
+    [ -e "$plugin" ] && ln -sf "$plugin" "$HOME/.oh-my-zsh/custom/plugins/"
 done
 
-for plugin in ~/.config/zsh/custom/plugins/*; do
-    ln -sf "$plugin" ~/.oh-my-zsh/custom/plugins/
-done
-
-# Test if Zsh is configured properly
-if zsh -c "echo Zsh is working!" &> /dev/null; then
-    echo "Zsh environment setup complete!"
+# Test Zsh
+if zsh -c "echo Zsh is working" &>/dev/null; then
+    echo "Zsh environment setup complete."
 else
-    echo "Error: Zsh configuration failed. Please check your .zshrc."
+    echo "Error: Zsh configuration failed. Check your dotfiles."
+    exit 1
 fi
 
-echo "Zsh setup complete! Installing neovim."
+# Install Neovim setup
+bash "$DOTFILES_DIR/setup_neovim.sh" "$DOTFILES_DIR/init.vim"
 
-"$SCRIPT_DIR/setup_neovim.sh" "$SCRIPT_DIR/init.vim"
-
+# Locale setup (only if sudo)
 if has_sudo; then
-    echo "Enabling en_GB.UTF-8 locale."
-    sudo sed -i 's/# en_GB.UTF-8 UTF-8/en_GB.UTF-8 UTF-8/g' /etc/locale.gen
+    echo "Enabling en_GB.UTF-8 locale..."
+    sudo sed -i 's/# en_GB.UTF-8 UTF-8/en_GB.UTF-8 UTF-8/' /etc/locale.gen
     sudo locale-gen
     sudo update-locale LANG=en_GB.UTF-8
-
     export LANG=en_GB.UTF-8
     export LC_ALL=en_GB.UTF-8
-
-    sudo apt install -y btop
 fi
 
-if [ ! -d "$HOME/bin" ] || [ -z "$( ls -A '$HOME/bin' 2>/dev/null )" ]; then
-    echo "Linking bin folder"
-    ln -sf $HOME/.config/zsh/bin $HOME/bin
+# Link bin folder
+if [ ! -d "$HOME/bin" ] || [ -z "$(ls -A "$HOME/bin" 2>/dev/null)" ]; then
+    echo "Linking ~/bin -> $DOTFILES_DIR/zsh/bin"
+    ln -sfn "$DOTFILES_DIR/zsh/bin" "$HOME/bin"
 fi
+
+echo "Install complete."
 

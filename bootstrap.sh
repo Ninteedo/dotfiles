@@ -2,7 +2,7 @@
 
 # Variables
 REPO_URL="https://github.com/Ninteedo/dotfiles.git"
-CLONE_DIR="$HOME/.config/zsh"
+CLONE_DIR="$HOME/.dotfiles/"
 
 if [ "$(id -u)" = "0" ]; then
     echo "Error: Do not run this script as root."
