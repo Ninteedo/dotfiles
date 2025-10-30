@@ -126,7 +126,11 @@ alias gh="history | grep"
 export TERM='xterm-256color'
 export TZ='GB'
 
-export PATH="$HOME/.local/neovim/bin:$PATH"
+export PATH="$HOME/.local/neovim/bin:$HOME/bin:$PATH"
+
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
