@@ -26,7 +26,7 @@ set smartcase
 set undofile
 set undodir=~/.vim/undodir
 set termguicolors
-set shell="/bin/zsh --login"
+set shell=/bin/zsh
 " set guicursor=
 
 
@@ -51,7 +51,7 @@ call plug#end()
 let g:airline_theme='dracula'
 let g:python3_host_prog = '/usr/bin/python3'
 
-if empty(glob('~/.local/share/nvim/plugged/dracula'))
+if empty(glob('~/.local/share/nvim/plugged/vim/colors/dracula.vim'))
   " skip setting colorscheme if not installed
 else
   colorscheme dracula
