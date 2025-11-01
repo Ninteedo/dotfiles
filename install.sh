@@ -40,7 +40,7 @@ fi
 ln -sf "$ZSH_CONFIG/.zshrc" "$HOME/.zshrc"
 
 # Powerlevel10k link
-ln -sf "$DOTFILES_DIR/.p10k.zsh" "$HOME/.p10k.zsh"
+ln -sf "$ZSH_CONFIG/.p10k.zsh" "$HOME/.p10k.zsh"
 
 # Oh My Zsh
 if [ ! -f "$HOME/.oh-my-zsh/oh-my-zsh.sh" ]; then
@@ -85,7 +85,7 @@ fi
 # Link bin folder
 if [ ! -d "$HOME/bin" ] || [ -z "$(ls -A "$HOME/bin" 2>/dev/null)" ]; then
     echo "Linking ~/bin -> $DOTFILES_DIR/zsh/bin"
-    ln -sfn "$DOTFILES_DIR/zsh/bin" "$HOME/bin"
+    ln -sfn "$DOTFILES_DIR/bin" "$HOME/bin"
 fi
 
 echo "Install complete."
