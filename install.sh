@@ -1,8 +1,8 @@
 #!/bin/bash
 
 DOTFILES_DIR=$(dirname "$(realpath "$0")")
-CUSTOM_DIR="$ZSH_CONFIG/custom"
 ZSH_CONFIG="$HOME/.config/zsh"
+CUSTOM_DIR="$ZSH_CONFIG/custom"
 
 has_sudo() {
     sudo -l &>/dev/null
