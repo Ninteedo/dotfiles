@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DOTFILES_DIR=$(dirname "$(realpath "$0")")
-CUSTOM_DIR="$DOTFILES_DIR/custom"
+CUSTOM_DIR="$ZSH_CONFIG/custom"
 ZSH_CONFIG="$HOME/.config/zsh"
 
 has_sudo() {
@@ -13,11 +13,11 @@ if [ "$(id -u)" = "0" ]; then
     exit 1
 fi
 
-# Install Zsh and Git if not installed
+# Install packages
 if has_sudo; then
     echo "Sudo privileges detected, installing packages..."
     sudo apt update
-    sudo apt install -y zsh git neovim ranger tmux duf procs sd
+    sudo apt install -y zsh git curl neovim ranger tmux duf sd
 else
     echo "No sudo pivileges, skipping package installation."
 fi
