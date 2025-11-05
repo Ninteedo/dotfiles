@@ -1,6 +1,7 @@
 #!/bin/bash
 
 DOTFILES_DIR=$(dirname "$(realpath "$0")")
+CUSTOM_DIR="$DOTFILES_DIR/custom"
 ZSH_CONFIG="$HOME/.config/zsh"
 
 has_sudo() {
@@ -54,10 +55,10 @@ fi
 
 # Link themes and plugins
 mkdir -p "$HOME/.oh-my-zsh/custom/themes" "$HOME/.oh-my-zsh/custom/plugins"
-for theme in "$ZSH_CONFIG/custom/themes/"*; do
+for theme in "$CUSTOM_DIR/themes/"*; do
     [ -e "$theme" ] && ln -sf "$theme" "$HOME/.oh-my-zsh/custom/themes/"
 done
-for plugin in "$ZSH_CONFIG/custom/plugins/"*; do
+for plugin in "$CUSTOM_DIR/plugins/"*; do
     [ -e "$plugin" ] && ln -sf "$plugin" "$HOME/.oh-my-zsh/custom/plugins/"
 done
 
