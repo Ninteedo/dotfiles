@@ -125,6 +125,7 @@ alias gh="history | grep"
 
 export TERM='xterm-256color'
 export TZ='GB'
+export EDITOR='vim'
 
 export PATH="$HOME/.local/neovim/bin:$HOME/bin:$PATH"
 
@@ -136,3 +137,5 @@ fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+[[ ! -f ~/.zsh_functions ]] || source ~/.zsh_functions
+

@@ -1,0 +1,15 @@
+#!/bin/zsh
+
+mkcd () {
+    if [ "$#" -ne 1 ]; then
+        echo "Usage: mkcd <dir>"
+        exit 1
+    fi
+    mkdir -p "$1"
+    if [ "$?" -ne 0 ]; then
+        echo "Failed to create directory $1"
+        exit 1
+    fi
+    cd "$1"
+}
+
