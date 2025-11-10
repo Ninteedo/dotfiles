@@ -72,6 +72,9 @@ if has_sudo; then
     export LC_ALL=en_GB.UTF-8
 fi
 
+# git setup
+git config --global core.editor "vim"
+
 # Link bin folder
 if [ ! -d "$HOME/bin" ] || [ -z "$(ls -A "$HOME/bin" 2>/dev/null)" ]; then
     echo "Linking ~/bin -> $DOTFILES_DIR/zsh/bin"
