@@ -1,8 +1,8 @@
 #!/bin/bash
 
 DOTFILES_DIR=$(dirname "$(realpath "$0")")
-ZSH_CONFIG="$HOME/.config/zsh"
-CUSTOM_DIR="$ZSH_CONFIG/custom"
+ZSH_DIR="$DOTFILES_DIR/zsh"
+CUSTOM_DIR="$ZSH_DIR/custom"
 
 has_sudo() {
     sudo -l &>/dev/null
@@ -27,21 +27,10 @@ if ! command -v zsh &> /dev/null; then
     exit 1
 fi
 
-# Link Zsh config
-mkdir -p "$(dirname "$ZSH_CONFIG")"
-if [ ! -L "$ZSH_CONFIG" ]; then
-    echo "Linking $ZSH_CONFIG -> $DOTFILES_DIR/zsh"
-    rm -rf "$ZSH_CONFIG"
-    ln -s "$DOTFILES_DIR/zsh" "$ZSH_CONFIG"
-else
-    echo "$ZSH_CONFIG already linked."
-fi
-
 # zshrc link
-ln -sf "$ZSH_CONFIG/.zshrc" "$HOME/.zshrc"
-
+ln -sf "$ZSH_DIR/.zshrc" "$HOME/.zshrc"
 # Powerlevel10k link
-ln -sf "$ZSH_CONFIG/.p10k.zsh" "$HOME/.p10k.zsh"
+ln -sf "$ZSH_DIR/.p10k.zsh" "$HOME/.p10k.zsh"
 
 # Oh My Zsh
 if [ ! -f "$HOME/.oh-my-zsh/oh-my-zsh.sh" ]; then
