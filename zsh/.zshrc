@@ -110,17 +110,6 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# Fix Home and End keys in MobaXterm
-bindkey '\e[1~' beginning-of-line  # Home key
-bindkey '\e[4~' end-of-line        # End key
-bindkey '\eOH' beginning-of-line   # Home key
-bindkey '\eOF' end-of-line         # End key
-bindkey '^[[H' beginning-of-line   # Home key
-bindkey '^[[F' end-of-line         # End key
-
-#bindkey '^H' backward-kill-word    # Ctrl+Backspace
-#bindkey '5~' kill-word             # Ctrl+Delete
-
 alias gh="history | grep"
 
 export TERM='xterm-256color'
