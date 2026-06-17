@@ -13,3 +13,4 @@ mkcd () {
     cd "$1"
 }
 
+alias lt='ls -lht'
