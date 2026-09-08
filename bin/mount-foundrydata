@@ -1,3 +1,0 @@
-#!/bin/bash
-
-sshfs ember:/home/richard/foundrydata ~/network/foundrydata
