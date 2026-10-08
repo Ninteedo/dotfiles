@@ -114,9 +114,9 @@ alias gh="history | grep"
 
 export TERM='xterm-256color'
 export TZ='GB'
-export EDITOR='vim'
+export EDITOR='nvim'
 
-export PATH="$HOME/.local/neovim/bin:$HOME/bin:$PATH"
+export PATH="$PATH:$HOME/.local/neovim/bin:$HOME/bin"
 
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
