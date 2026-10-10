@@ -1,4 +1,4 @@
-To install (requires sudo for apt):
+To install (requires sudo):
 
 ```sh
 bash <(curl -fsSL https://raw.githubusercontent.com/Ninteedo/dotfiles/main/bootstrap.sh)
