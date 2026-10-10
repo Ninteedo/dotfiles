@@ -34,43 +34,100 @@ pkg_install() {
     esac
 }
 
-# Install packages
+filter_available() {
+    local p avail
+    case "$PM" in
+        apt)    for p in "$@"; do apt-cache show "$p" &>/dev/null && echo "$p"; done ;;
+        pacman) for p in "$@"; do pacman -Si "$p" &>/dev/null && echo "$p"; done ;;
+        dnf)
+            avail=$(dnf repoquery --quiet --available --queryformat $'%{name}\n' "$@" 2>/dev/null)
+            for p in "$@"; do grep -qx "$p" <<<"$avail" && echo "$p"; done
+            ;;
+    esac
+}
+
+MISSING_PKGS=()
+has_missing() { [[ " ${MISSING_PKGS[*]} " == *" $1 "* ]]; }
+
+install_packages() {
+    local wanted=("$@") found=() missing=() p
+    mapfile -t found < <(filter_available "${wanted[@]}")
+    for p in "${wanted[@]}"; do
+        [[ " ${found[*]} " == *" $p "* ]] || missing+=("$p")
+    done
+    MISSING_PKGS=("${missing[@]}")
+
+    if [ "${#found[@]}" -eq 0 ]; then
+        echo "Warning: none of the requested packages were found in the repositories."
+        return 1
+    fi
+
+    echo "Installing ${#found[@]} packages in one transaction: ${found[*]}"
+    if pkg_install "${found[@]}" 2>&1; then
+        echo "Packages installed."
+    else
+        echo "Warning: package installation failed."
+        return 1
+    fi
+
+    if [ "${#missing[@]}" -gt 0 ]; then
+        echo "Not available in the enabled repositories: ${missing[*]}"
+    fi
+}
+
+# Packages
+CORE_PKGS=(zsh git curl neovim)
+OPTIONAL_PKGS=(duf sd ripgrep btop fzf ranger tmux bat eza lazygit rsync)
+case "$PM" in
+    apt)    EXTRA_PKGS=(gpg locales) ;;       # gpg: eza repo key, locales: locale-gen
+    dnf)    EXTRA_PKGS=(glibc-langpack-en) ;; # Fedora ships locales as langpacks
+    *)      EXTRA_PKGS=() ;;
+esac
+
 if [ "$PM" = "unknown" ]; then
     echo "No supported package manager found (apt, pacman, dnf), skipping package installation."
 elif has_sudo; then
-    echo "Sudo privileges detected, installing packages with $PM..."
-    [ "$PM" = "apt" ] && sudo apt-get update
+    echo "Sudo privileges detected, installing packages with $PM (log: $LOG_FILE)..."
 
-    # Core packages: a failure here should be visible
-    pkg_install zsh git curl neovim \
-        || echo "Warning: some core packages failed to install."
+    if [ "$PM" = "apt" ]; then
+        sudo apt-get update -qq >>"$LOG_FILE" 2>&1 || echo "Warning: apt update failed."
+    fi
 
-    # Optional packages: not available in every release, so install one by one
-    for pkg in duf sd ripgrep btop fzf ranger tmux bat eza lazygit; do
-        pkg_install "$pkg" || echo "Note: '$pkg' is not available on this system, skipping."
-    done
+    install_packages "${CORE_PKGS[@]}" "${OPTIONAL_PKGS[@]}" "${EXTRA_PKGS[@]}"
 
-    case "$PM" in
-        apt)
-            # install eza
-            pkg_install gpg
-            sudo mkdir -p /etc/apt/keyrings
-            wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg
-            echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | sudo tee /etc/apt/sources.list.d/gierens.list
-            sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
-            sudo apt update
-            sudo apt install -y eza
-            ;;
-        pacman)
-            ;;
-        dnf)
-            sudo dnf -y copr enable dejan/lazygit
-            sudo dnf -y install lazygit
-            ;;
-        *)
-            ;;
-    esac
+    # Third-party sources, only when the distro repos don't carry the package
+    if [ "$PM" = "apt" ] && has_missing eza; then
+        echo "Adding the eza apt repository..."
+        {
+            sudo mkdir -p /etc/apt/keyrings &&
+            curl -fsSL https://raw.githubusercontent.com/eza-community/eza/main/deb.asc \
+                | sudo gpg --dearmor --yes -o /etc/apt/keyrings/gierens.gpg &&
+            echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" \
+                | sudo tee /etc/apt/sources.list.d/gierens.list >/dev/null &&
+            sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list &&
+            sudo apt-get update -qq &&
+            sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq eza
+        } >>"$LOG_FILE" 2>&1 \
+            && echo "eza installed." \
+            || echo "Warning: eza installation failed (see $LOG_FILE)."
+    fi
 
+    if [ "$PM" = "dnf" ] && has_missing lazygit; then
+        echo "Adding the lazygit COPR repository..."
+        {
+            sudo dnf install -y -q dnf-plugins-core &&
+            sudo dnf -y copr enable dejan/lazygit &&
+            sudo dnf install -y -q lazygit
+        } >>"$LOG_FILE" 2>&1 \
+            && echo "lazygit installed." \
+            || echo "Warning: lazygit installation failed (see $LOG_FILE)."
+    fi
+
+    # Debian/Ubuntu name the bat binary batcat
+    if command -v batcat &>/dev/null && ! command -v bat &>/dev/null; then
+        mkdir -p "$HOME/.local/bin"
+        ln -sf "$(command -v batcat)" "$HOME/.local/bin/bat"
+    fi
 else
     echo "No sudo privileges, skipping package installation."
 fi
